@@ -4,9 +4,35 @@ body {
     box-sizing: border-box;
 }
 
-.button {
+.btn {
     height: 100%;
     padding: 8x 8px;
+    margin-right: 10px;
+    border: 1px solid #999;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn-success {
+    background-color: #00C851;
+    color: #fff;
+}
+
+.btn-success:hover, .btn-success:active, .btn-success:visited {
+    background-color: #007E33;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #ff4444;
+    color: #fff;
+}
+
+.btn-danger:hover, .btn-danger:active, .btn-danger:visited {
+    background-color: #CC0000;
+    color: #fff;
 }
 
 .box {

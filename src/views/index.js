@@ -69,6 +69,71 @@ if (indexedDb && form) {
         // Leemos la collection o almacen de tareas para imprimirlo en el 
         // esto duplica al momento de imprimir la data del almacen en este caso tasks
         readData();
+        console.log('Se creo una nueva tarea: ', data.taskTitle);
+    }
+
+    /**
+     * Buscar data filtrada por la key, nos retorna el value
+     * nos devuelve un unico valor con la clave dada, es como un filter
+     */
+    const getData = (key) => {
+        const transaction = db.transaction(['tasks'], 'readwrite'); // Devuelve un objeto de tipo transaction
+        const objectStore = transaction.objectStore('tasks');
+        const request = objectStore.get(key);
+
+        request.onsuccess = () => {
+            form.task.value = request.result.taskTitle;
+            form.priority.value = request.result.taskPriority;
+            form.button.dataset.action = 'update';
+
+            form.button.textContent = ' Update task';
+            form.button.removeAttribute('class', 'icofont-plus');
+            form.button.setAttribute('class', 'btn btn-primary icofont icofont-refresh');
+        }
+    }
+
+    // Actualiza data a la indexedDB
+    const updateData = (data, disabled) => {
+
+        /**
+         * Con el metodo put actualizamos la data existente con la nueva data que se pasa por parametro
+         * en caso de que la data sea diferente a la existente entonces el metodo put crea una nueva data
+         */
+
+        const transaction = db.transaction(['tasks'], 'readwrite'); // Devuelve un objeto de tipo transaction
+        const objectStore = transaction.objectStore('tasks');
+        const request = objectStore.put(data);
+        
+        // Le decimos cuando termine cambia el action del button nuevamente a add junto al icono y el textContent
+        // e imprime en consola
+        request.onsuccess = () => {
+            form.button.dataset.action = 'add';
+            form.button.textContent = ' Add task';
+            form.button.removeAttribute('class')
+            form.button.setAttribute('class', 'btn btn-primary icofont icofont-plus')
+            console.log('Se ha actualizado la tarea: ', data.taskTitle);
+
+            // Eneable update button
+            disabled = false;
+
+
+            // Leemos la collection o almacen de tareas para imprimirlo en el 
+            // esto duplica al momento de imprimir la data del almacen en este caso tasks
+            readData();
+        }
+
+    }
+
+    const deleteData = (key) => {
+        
+        const transaction = db.transaction(['tasks'], 'readwrite'); // Devuelve un objeto de tipo transaction
+        const objectStore = transaction.objectStore('tasks');
+        const request = objectStore.delete(key);
+
+        request.onsuccess = () => {
+            console.log('Se ha eliminado la tarea: ', key);
+            readData();
+        }
     }
     
     // Leer la data en la indexedDB
@@ -103,32 +168,35 @@ if (indexedDb && form) {
                 div.setAttribute('class', 'box');
                 div.style.display = 'flex';
                 const taskTitle = document.createElement('p');
-                taskTitle.style.width = '30%';
+                taskTitle.style.width = '50%';
                 taskTitle.style.textTransform = 'capitalize';
                 taskTitle.textContent = cursor.value.taskTitle;
                 div.appendChild(taskTitle);
                 const taskPriority = document.createElement('p');
-                taskPriority.style.width = '10%';
+                taskPriority.style.width = '20%';
                 taskPriority.style.color = '#AA0000';
                 taskPriority.style.fontWeight = 'bold';
                 taskPriority.style.textTransform = 'capitalize';
                 taskPriority.textContent = cursor.value.taskPriority;
                 div.appendChild(taskPriority);
-
+                
+                // Boton de actualizar 
                 const taskUpdate = document.createElement('BUTTON');
-                taskUpdate.dataset.style = 'update';
-                taskUpdate.setAttribute('class', 'button');
+                taskUpdate.dataset.type = 'update';
+                taskUpdate.setAttribute('class', 'btn btn-success icofont icofont-refresh');
                 taskUpdate.dataset.key = cursor.key;
-                taskUpdate.textContent = 'Update';
+                taskUpdate.textContent = ' Update';
                 div.appendChild(taskUpdate);
 
+                // Boton de eliminar
                 const taskDelete = document.createElement('BUTTON');
-                taskDelete.dataset.style = 'delete';
-                taskDelete.setAttribute('class', 'button');
+                taskDelete.dataset.type = 'delete';
+                taskDelete.setAttribute('class', 'btn btn-danger icofont icofont-trash');
                 taskDelete.dataset.key = cursor.key;
-                taskDelete.textContent = 'Delete';
+                taskDelete.textContent = ' Delete';
                 div.appendChild(taskDelete);
-
+                
+                // AGREGA EL DIV AL FRAGMENT PARA LUEGO INCRUSTARLO EN EL DOM
                 fragment.appendChild(div);
 
 
@@ -149,14 +217,31 @@ if (indexedDb && form) {
     }
 
     form.addEventListener('submit', (e) => {
+
         e.preventDefault();
+
         const data = {
             taskTitle: e.target.task.value.toString().toLowerCase(),
             taskPriority: e.target.priority.value.toString().toLowerCase()
         }
+
+        if( e.target.button.dataset.action == 'add' ) {
+            addData(data);
+        }else if( e.target.button.dataset.action == 'update') {
+            updateData(data);
+        }
+
+        form.reset();
         
-        addData(data);
-        console.log("Data agregada a la indexedDB!");
+    });
+    
+    tasksWrapper.addEventListener('click', (e) => {
+        if(e.target.dataset.type == 'update'){
+            getData(e.target.dataset.key, e.target.disabled);
+            e.target.disabled = true;
+        } else if( e.target.dataset.type == 'delete' ){
+            deleteData(e.target.dataset.key);
+        }
     })
 
 }
