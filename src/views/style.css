@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
+body {
+    font-family: 'Lato', sans-serif;
+    box-sizing: border-box;
+}
+
+.uk-margin {
+    padding: 20px 20px;
+}
+
+.uk-task form {
+    display: flex;
+    height: 35px;
+}
+
+.uk-task form label {
+    margin: 0;
+    display: flex;
+    align-self: center;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.uk-task form input {
+    height: 30px !important;
+    border-radius: 20px;
+}
+
+.uk-task form select {
+    height: 36px !important;
+    border-radius: 20px;
+    padding: 0 5px
+}
+
+.uk-task form button {
+    height: 36px !important;
+}
+
+.mr-2 {
+    margin-right: 10px;
+}
+
+.btn {
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.btn.btn-primary {
+    background-color: #0771d4;
+    color: #fff;
+}
