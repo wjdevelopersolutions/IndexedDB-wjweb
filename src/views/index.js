@@ -100,20 +100,37 @@ if (indexedDb && form) {
             if ( cursor ) {
                 // console.log(cursor.value);
                 const div = document.createElement('div');
+                div.setAttribute('class', 'box');
                 div.style.display = 'flex';
                 const taskTitle = document.createElement('p');
-                taskTitle.style.width = '50%';
+                taskTitle.style.width = '30%';
                 taskTitle.style.textTransform = 'capitalize';
                 taskTitle.textContent = cursor.value.taskTitle;
                 div.appendChild(taskTitle);
                 const taskPriority = document.createElement('p');
-                taskPriority.style.width = '50%';
+                taskPriority.style.width = '10%';
                 taskPriority.style.color = '#AA0000';
                 taskPriority.style.fontWeight = 'bold';
                 taskPriority.style.textTransform = 'capitalize';
                 taskPriority.textContent = cursor.value.taskPriority;
                 div.appendChild(taskPriority);
+
+                const taskUpdate = document.createElement('BUTTON');
+                taskUpdate.dataset.style = 'update';
+                taskUpdate.setAttribute('class', 'button');
+                taskUpdate.dataset.key = cursor.key;
+                taskUpdate.textContent = 'Update';
+                div.appendChild(taskUpdate);
+
+                const taskDelete = document.createElement('BUTTON');
+                taskDelete.dataset.style = 'delete';
+                taskDelete.setAttribute('class', 'button');
+                taskDelete.dataset.key = cursor.key;
+                taskDelete.textContent = 'Delete';
+                div.appendChild(taskDelete);
+
                 fragment.appendChild(div);
+
 
                 // Crea un bucle que recorre el almacen una y otra vez mientras tenga documentos
                 // al final si no hay mas documentos pasa al else.
